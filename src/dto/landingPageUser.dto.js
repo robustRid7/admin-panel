@@ -10,7 +10,7 @@ const createLandingPageUserSchema = Joi.object({
 // Get DTO (pagination)
 const getLandingPageUsersSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
-  limit: Joi.number().integer().min(1).max(100).default(10),
+  limit: Joi.number().integer().min(1).max(100000).default(1000),
 });
 
 module.exports = {

@@ -3,11 +3,6 @@ const AppError = require("../utils/error");
 
 // Create Bonus Page User
 const createBonusPageUser = async (data) => {
-  const existing = await BonusPageUser.findOne({ campaignId: data.campaignId });
-  if (existing) {
-    throw new AppError(409, "Campaign ID already exists in Bonus Page Users");
-  }
-
   const bonusPageUser = new BonusPageUser(data);
   return await bonusPageUser.save();
 };

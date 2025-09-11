@@ -16,7 +16,6 @@ const bonusPageUserSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      unique: true, // ✅ enforce uniqueness
     },
   },
   { timestamps: true }

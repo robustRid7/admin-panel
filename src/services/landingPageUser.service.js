@@ -2,12 +2,6 @@ const LandingPageUser = require("../model/landingPageUser.model");
 const AppError = require('../utils/error')
 // Create Landing Page User
 const createLandingPageUser = async (data) => {
-  // Check if campaignId already exists
-  const existing = await LandingPageUser.findOne({ campaignId: data.campaignId });
-  if (existing) {
-    throw new AppError(409, "Campaign ID already exists");
-  }
-
   const landingPageUser = new LandingPageUser(data);
   return await landingPageUser.save();
 };
