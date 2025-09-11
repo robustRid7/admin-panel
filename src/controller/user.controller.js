@@ -1,6 +1,10 @@
 const userService = require("../services/user.service");
 const validate = require("../utils/validateDto");
-const { createUserSchema, getUsersSchema } = require("../dto/user.dto");
+const {
+  createUserSchema,
+  getUsersSchema,
+  adminLoginSchema,
+} = require("../dto/user.dto");
 
 const createUser = async (req, res, next) => {
   try {
@@ -33,7 +37,28 @@ const getUsers = async (req, res, next) => {
   }
 };
 
+const loginAdmin = async (req, res, next) => {
+  try {
+    const validatedData = validate(adminLoginSchema, req.body);
+
+    const token = await userService.loginAdmin(validatedData);
+
+    res.cookie("token", token, {
+      httpOnly: true, // basic protection
+      maxAge: 60 * 60 * 1000, // 1 hour
+    });
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   createUser,
   getUsers,
+  loginAdmin,
 };

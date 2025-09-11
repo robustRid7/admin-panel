@@ -35,6 +35,7 @@ const getBonusPageUsers = async (req, res, next) => {
   }
 };
 
+
 module.exports = {
   createBonusPageUser,
   getBonusPageUsers,

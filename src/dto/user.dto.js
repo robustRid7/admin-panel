@@ -13,7 +13,13 @@ const getUsersSchema = Joi.object({
   limit: Joi.number().integer().min(1).max(100).default(10),
 });
 
+const adminLoginSchema = Joi.object({
+  userId: Joi.string().required().lowercase(), 
+  password: Joi.string().required(),
+});
+
 module.exports = {
   createUserSchema,
   getUsersSchema,
+  adminLoginSchema,
 };
