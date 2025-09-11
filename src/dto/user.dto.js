@@ -11,6 +11,9 @@ const createUserSchema = Joi.object({
 const getUsersSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100).default(10),
+  filters: Joi.object({
+    domain: Joi.string().optional() // filter by domain, optional
+  }).default({}) // default empty object if not provided
 });
 
 const adminLoginSchema = Joi.object({

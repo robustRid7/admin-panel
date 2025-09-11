@@ -11,6 +11,11 @@ const createLandingPageUserSchema = Joi.object({
 const getLandingPageUsersSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100000).default(1000),
+  filters: Joi.object({
+    domain: Joi.string().optional(),
+    medium: Joi.string().optional(),
+    campaignId: Joi.string().optional(),
+  }).default({}),
 });
 
 module.exports = {

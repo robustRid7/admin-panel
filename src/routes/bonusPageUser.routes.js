@@ -6,6 +6,6 @@ const bonusPageUserController = require("../controller/bonusPageUser.controller"
 router.post("/signup", bonusPageUserController.createBonusPageUser);
 
 // Get Bonus Page Users
-router.get("/fetch", bonusPageUserController.getBonusPageUsers);
+router.post("/fetch", bonusPageUserController.getBonusPageUsers);
 
 module.exports = router;

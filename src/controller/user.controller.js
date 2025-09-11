@@ -16,7 +16,6 @@ const createUser = async (req, res, next) => {
 
     res.status(201).json({
       message: "User created successfully",
-      user,
     });
   } catch (err) {
     next(err); // Pass error to global handler
@@ -25,7 +24,7 @@ const createUser = async (req, res, next) => {
 
 const getUsers = async (req, res, next) => {
   try {
-    const validatedQuery = validate(getUsersSchema, req.query);
+    const validatedQuery = validate(getUsersSchema, req.body);
     const result = await userService.getUsers(validatedQuery);
 
     res.status(200).json({

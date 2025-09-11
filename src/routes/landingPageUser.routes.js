@@ -6,6 +6,6 @@ const landingPageUserController = require("../controller/landingPageUser.control
 router.post("/signup", landingPageUserController.createLandingPageUser);
 
 // Get Landing Page Users (with pagination)
-router.get("/fetch", landingPageUserController.getLandingPageUsers);
+router.post("/fetch", landingPageUserController.getLandingPageUsers);
 
 module.exports = router;

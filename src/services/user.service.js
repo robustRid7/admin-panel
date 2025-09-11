@@ -4,27 +4,25 @@ const jwt = require("jsonwebtoken");
 
 const createUser = async (userData) => {
   // Check if a user with same userId, mobileNumber, or email already exists
-  const existingUser = await User.findOne({
-    $or: [
-      { userId: userData.userId },
-      { mobileNumber: userData.mobileNumber },
-      { email: userData.email },
-    ],
-  });
+  // const existingUser = await User.findOne({
+  //   $or: [
+  //     { userId: userData.userId },
+  //     { mobileNumber: userData.mobileNumber },
+  //     { email: userData.email },
+  //   ],
+  // });
 
-  if (existingUser) {
-    throw new AppError(409, "User with same UserId, Mobile Number, or Email already exists");
-  }
+
   const user = new User(userData);
   return await user.save();
 };
 
-const getUsers = async ({ page, limit }) => {
+const getUsers = async ({ page, limit, filters }) => {
   const skip = (page - 1) * limit;
 
   const [users, total] = await Promise.all([
-    User.find().skip(skip).limit(limit),
-    User.countDocuments(),
+    User.find(filters).skip(skip).limit(limit),
+    User.countDocuments(filters),
   ]);
 
   return {

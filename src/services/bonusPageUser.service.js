@@ -8,12 +8,12 @@ const createBonusPageUser = async (data) => {
 };
 
 // Get Bonus Page Users with pagination
-const getBonusPageUsers = async ({ page, limit }) => {
+const getBonusPageUsers = async ({ page, limit, filters }) => {
   const skip = (page - 1) * limit;
 
   const [users, total] = await Promise.all([
-    BonusPageUser.find().skip(skip).limit(limit),
-    BonusPageUser.countDocuments(),
+    BonusPageUser.find(filters).skip(skip).limit(limit),
+    BonusPageUser.countDocuments(filters),
   ]);
 
   return {

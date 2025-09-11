@@ -7,12 +7,12 @@ const createLandingPageUser = async (data) => {
 };
 
 // Get Landing Page Users (with pagination)
-const getLandingPageUsers = async ({ page, limit }) => {
+const getLandingPageUsers = async ({ page, limit, filters }) => {
   const skip = (page - 1) * limit;
 
   const [users, total] = await Promise.all([
-    LandingPageUser.find().skip(skip).limit(limit),
-    LandingPageUser.countDocuments(),
+    LandingPageUser.find(filters).skip(skip).limit(limit),
+    LandingPageUser.countDocuments(filters),
   ]);
 
   return {

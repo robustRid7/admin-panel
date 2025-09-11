@@ -13,7 +13,6 @@ const createBonusPageUser = async (req, res, next) => {
 
     res.status(201).json({
       message: "Bonus Page User created successfully",
-      user,
     });
   } catch (err) {
     next(err);
@@ -23,7 +22,7 @@ const createBonusPageUser = async (req, res, next) => {
 // Get Bonus Page Users
 const getBonusPageUsers = async (req, res, next) => {
   try {
-    const validatedQuery = validate(getBonusPageUsersSchema, req.query);
+    const validatedQuery = validate(getBonusPageUsersSchema, req.body);
     const result = await bonusPageUserService.getBonusPageUsers(validatedQuery);
 
     res.status(200).json({

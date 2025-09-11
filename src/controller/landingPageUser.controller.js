@@ -13,7 +13,6 @@ const createLandingPageUser = async (req, res, next) => {
 
     res.status(201).json({
       message: "Landing Page User created successfully",
-      user,
     });
   } catch (err) {
     next(err);
@@ -23,7 +22,7 @@ const createLandingPageUser = async (req, res, next) => {
 // Get Landing Page Users
 const getLandingPageUsers = async (req, res, next) => {
   try {
-    const validatedQuery = validate(getLandingPageUsersSchema, req.query);
+    const validatedQuery = validate(getLandingPageUsersSchema, req.body);
     const result = await landingPageUserService.getLandingPageUsers(validatedQuery);
 
     res.status(200).json({
