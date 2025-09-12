@@ -1,8 +1,14 @@
 const BonusPageUser = require("../model/bonusPageUser.model");
 const AppError = require("../utils/error");
+const { findOrInsertAndReturnId } = require("./campaign.service");
 
 // Create Bonus Page User
 const createBonusPageUser = async (data) => {
+  const campaignId = await findOrInsertAndReturnId({
+    campaignId: data.campaignId,
+    campaignName: data.campaignName,
+  });
+  data.campaignId = campaignId;
   const bonusPageUser = new BonusPageUser(data);
   return await bonusPageUser.save();
 };

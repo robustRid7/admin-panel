@@ -5,6 +5,7 @@ const createLandingPageUserSchema = Joi.object({
   domain: Joi.string().required(),
   medium: Joi.string().required(),
   campaignId: Joi.string().required(),
+  campaignName: Joi.string().optional(),
 });
 
 // Get DTO (pagination)

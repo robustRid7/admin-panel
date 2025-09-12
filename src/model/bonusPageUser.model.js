@@ -13,9 +13,9 @@ const bonusPageUserSchema = new mongoose.Schema(
       trim: true,
     },
     campaignId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Campaign", 
       required: true,
-      trim: true,
     },
   },
   { timestamps: true }

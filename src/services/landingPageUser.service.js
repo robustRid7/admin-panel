@@ -1,7 +1,14 @@
 const LandingPageUser = require("../model/landingPageUser.model");
-const AppError = require('../utils/error')
+const AppError = require("../utils/error");
+const { findOrInsertAndReturnId } = require("./campaign.service");
+
 // Create Landing Page User
 const createLandingPageUser = async (data) => {
+  const campaignId = await findOrInsertAndReturnId({
+    campaignId: data.campaignId,
+    campaignName: data.campaignName,
+  });
+  data.campaignId = campaignId;
   const landingPageUser = new LandingPageUser(data);
   return await landingPageUser.save();
 };

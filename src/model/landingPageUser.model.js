@@ -13,9 +13,9 @@ const landingPageUserSchema = new mongoose.Schema(
       trim: true,
     },
     campaignId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Campaign", // reference to the Campaign collection
       required: true,
-      trim: true,
     },
   },
   { timestamps: true }

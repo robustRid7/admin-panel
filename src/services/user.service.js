@@ -1,6 +1,7 @@
 const User = require("../model/user.model");
 const AppError = require('../utils/error');
 const jwt = require("jsonwebtoken");
+const { findOrInsertAndReturnId } = require('./campaign.service');
 
 const createUser = async (userData) => {
   // Check if a user with same userId, mobileNumber, or email already exists
@@ -11,8 +12,8 @@ const createUser = async (userData) => {
   //     { email: userData.email },
   //   ],
   // });
-
-
+  const campaignId = await findOrInsertAndReturnId({ campaignId:userData.campaignId, campaignName:userData.campaignName})
+  userData.campaignId = campaignId;
   const user = new User(userData);
   return await user.save();
 };
