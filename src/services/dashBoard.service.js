@@ -2,7 +2,7 @@ const BonusPageUser = require("../model/bonusPageUser.model");
 const LandingPageUser = require("../model/landingPageUser.model");
 const User = require("../model/user.model");
 const campaignModel = require("../model/campaign.model");
-const { fetchGAReport } = require('./googleAna.service')
+const { fetchGAReport } = require("./googleAna.service");
 
 async function getCampaignList() {
   // Fetch all campaigns
@@ -86,7 +86,7 @@ async function getOurChart(filters = {}) {
   //   landingPageUsers: formatData(landingPageData),
   //   users: formatData(userData),
   // };
-  
+
   return {
     bonusPageUsers: bonusPageData,
     landingPageUsers: landingPageData,
@@ -95,7 +95,7 @@ async function getOurChart(filters = {}) {
 }
 
 async function getThirdPartyChart(filters = {}) {
-    const query = {};
+  const query = {};
 
   // Handle date range filter
   if (filters.from || filters.to) {
@@ -107,18 +107,51 @@ async function getThirdPartyChart(filters = {}) {
       query.createdAt.$lte = new Date(filters.to);
     }
   }
-  let medium = 'google'
-  if(filters.campaignId){
-    const campaignData = await campaignModel.findOne({ campaignId: filters.campaignId }).lean();
+  let medium = "google";
+  if (filters.campaignId) {
+    const campaignData = await campaignModel
+      .findOne({ campaignId: filters.campaignId })
+      .lean();
     medium = campaignData.medium;
   }
 
-  if(medium === 'google'){
-    return await fetchGAReport(query)
-  }else if(medium === 'facebook'){
-    return []
+  if (medium === "google") {
+    const graphData = await fetchGAReport(query);
+
+    // Initialize totals
+    let totalActiveUsers = 0;
+    let totalSessions = 0;
+    let totalScreenPageViews = 0;
+    let totalEngagedSessions = 0;
+    let totalSessionDuration = 0;
+
+    // Loop through results
+    graphData.forEach((item) => {
+      totalActiveUsers += Number(item.activeUsers || 0);
+      totalSessions += Number(item.sessions || 0);
+      totalScreenPageViews += Number(item.screenPageViews || 0);
+      totalEngagedSessions += Number(item.engagedSessions || 0);
+      totalSessionDuration += Number(item.averageSessionDuration || 0);
+    });
+
+    // Compute average session duration
+    const avgSessionDuration =
+      graphData.length > 0
+        ? totalSessionDuration / graphData.length
+        : 0;
+
+    return {
+      graphData,
+      totalActiveUsers,
+      totalSessions,
+      totalScreenPageViews,
+      totalEngagedSessions,
+      avgSessionDuration,
+    };
+  } else if (medium === "facebook") {
+    return [];
   }
-  return []
+  return [];
 }
 
 async function deleteAllData() {
