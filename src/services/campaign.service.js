@@ -2,13 +2,14 @@ const campaignModel = require('../model/campaign.model')
 const AppError = require("../utils/error");
 
 
-async function findOrInsertAndReturnId({ campaignId, campaignName }) {
+async function findOrInsertAndReturnId({ campaignId, campaignName, medium }) {
   let data = await campaignModel.findOne({ campaignId }).lean();
 
   if (!data) {
     const newCampaign = await campaignModel.create({
       campaignId,
       campaignName,
+      medium
     });
     return newCampaign._id;
   }
@@ -16,7 +17,7 @@ async function findOrInsertAndReturnId({ campaignId, campaignName }) {
   return data._id;
 }
 
-async function getCampaignId({ campaignId, campaignName }) {
+async function getCampaignId({ campaignId, campaignName,  }) {
   let data = await campaignModel.findOne({ campaignId }).lean();
 
   if (!data) {

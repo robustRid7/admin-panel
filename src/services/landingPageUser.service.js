@@ -7,6 +7,7 @@ const createLandingPageUser = async (data) => {
   const campaignId = await findOrInsertAndReturnId({
     campaignId: data.campaignId,
     campaignName: data.campaignName,
+     medium: data.medium,
   });
   data.campaignId = campaignId;
   const landingPageUser = new LandingPageUser(data);

@@ -7,6 +7,7 @@ const createBonusPageUser = async (data) => {
   const campaignId = await findOrInsertAndReturnId({
     campaignId: data.campaignId,
     campaignName: data.campaignName,
+    medium: data.medium,
   });
   data.campaignId = campaignId;
   const bonusPageUser = new BonusPageUser(data);
