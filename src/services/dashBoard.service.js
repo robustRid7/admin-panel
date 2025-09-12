@@ -11,7 +11,7 @@ async function getCampaignList() {
 }
 
 async function getCampaignListCount(filters = {}) {
-  const query = { ...filters };
+  const { from, to, ...query } = filters; 
 
   // Handle date range filter
   if (filters.from || filters.to) {
