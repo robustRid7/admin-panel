@@ -5,4 +5,6 @@ const dashBoardController = require("../controller/dashBoard.controller");
 router.post("/campaigns", dashBoardController.getCampaignList);
 router.post("/campaigns/count", dashBoardController.getCampaignListCount);
 
+router.post("/campaigns/own/analytics", dashBoardController.getOurChart);
+
 module.exports = router;
