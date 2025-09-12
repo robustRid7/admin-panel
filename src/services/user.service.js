@@ -76,3 +76,22 @@ module.exports = {
   getUsers,
   loginAdmin,
 };
+
+
+// const mongoose = require("mongoose");
+
+// async function clearDatabase() {
+//   try {
+//     const collections = Object.keys(mongoose.connection.collections);
+
+//     for (const collectionName of collections) {
+//       const collection = mongoose.connection.collections[collectionName];
+//       await collection.deleteMany({}); // ✅ pass empty filter
+//     }
+
+//     console.log("✅ All data removed from database.");
+//   } catch (err) {
+//     console.error("❌ Error clearing database:", err);
+//   }
+// }
+// clearDatabase()
