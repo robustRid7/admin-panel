@@ -1,7 +1,7 @@
 const path = require("path");
 require("dotenv").config();
 const { BetaAnalyticsDataClient } = require("@google-analytics/data");
-const propertyId = process.env.PROPERTY_ID ?? 475359427;
+const propertyId = process.env.PROPERTY_ID ?? 503343569;
 const analyticsDataClient = new BetaAnalyticsDataClient({
   keyFilename: path.join(__dirname, "../secrets/file.json"),
 });
