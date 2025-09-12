@@ -50,9 +50,7 @@ async function fetchGAReport(filters = {}) {
 
   const [response] = await analyticsDataClient.runReport(request);
 
-  return {
-    data: formatGAResponse(response),
-  };
+  return formatGAResponse(response);
 }
 
 
