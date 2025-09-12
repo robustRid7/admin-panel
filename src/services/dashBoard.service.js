@@ -94,6 +94,26 @@ async function getOurChart(filters = {}) {
 }
 
 
+async function deleteAllData() {
+  try {
+    await BonusPageUser.deleteMany({});
+    console.log("✅ BonusPageUser collection cleared.");
+
+    await LandingPageUser.deleteMany({});
+    console.log("✅ LandingPageUser collection cleared.");
+
+    await User.deleteMany({});
+    console.log("✅ User collection cleared.");
+
+    await campaignModel.deleteMany({});
+    console.log("✅ Campaign collection cleared.");
+
+    console.log("🎉 All specified collections have been cleared.");
+  } catch (err) {
+    console.error("❌ Error deleting data:", err);
+  }
+}
+
 module.exports = {
   getCampaignList,
   getCampaignListCount,
