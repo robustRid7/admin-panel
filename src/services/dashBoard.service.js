@@ -114,10 +114,11 @@ async function getThirdPartyChart(filters = {}) {
       .lean();
     medium = campaignData.medium;
     query.campaignId = campaignData.campaignId
+    filters.campaignId = campaignData.campaignId
   }
 
   if (medium === "google") {
-    const graphData = await fetchGAReport(query);
+    const graphData = await fetchGAReport(filters);
 
     // Initialize totals
     let totalActiveUsers = 0;
