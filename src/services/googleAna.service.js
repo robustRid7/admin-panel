@@ -1,21 +1,63 @@
-const { BetaAnalyticsDataClient } = require("@google-analytics/data");
+const path = require("path");
 require("dotenv").config();
+const { BetaAnalyticsDataClient } = require("@google-analytics/data");
 const propertyId = process.env.PROPERTY_ID ?? 475359427;
+const item = require('../secrets/file.json')
+console.log("Resolved Path:", path.join(__dirname, "../secrets/file.json"));
 
 const analyticsDataClient = new BetaAnalyticsDataClient({
-  keyFilename: "../config/service-account-google.json",
+  keyFilename: path.join(__dirname, "../secrets/file.json"),
 });
 
-async function fetchGAReport() {
-  const [response] = await analyticsDataClient.runReport({
-    property: `properties/${propertyId}`,
-    dateRanges: [{ startDate: "7daysAgo", endDate: "today" }],
-    metrics: [{ name: "activeUsers" }, { name: "sessions" }],
-    dimensions: [{ name: "date" }],
-  });
+async function fetchGAReport(filters = {}) {
+  // Default date range
+  let startDate = "7daysAgo";
+  let endDate = "today";
 
-  return formatGAResponse(response);
+  // Override with filters if provided
+  if (filters.from) {
+    startDate = new Date(filters.from).toISOString().split("T")[0]; // YYYY-MM-DD
+  }
+  if (filters.to) {
+    endDate = new Date(filters.to).toISOString().split("T")[0]; // YYYY-MM-DD
+  }
+
+  // Base request
+  const request = {
+    property: `properties/${propertyId}`,
+    dateRanges: [{ startDate, endDate }],
+    metrics: [
+      { name: "activeUsers" },
+      { name: "sessions" },
+      { name: "engagedSessions" },
+      { name: "screenPageViews" },
+      { name: "averageSessionDuration" },
+      { name: "bounceRate" },
+    ],
+    dimensions: [{ name: "date" }],
+  };
+
+  // Add campaignId filter if passed
+  if (filters.campaignId) {
+    request.dimensions.push({ name: "campaignId" }); // GA4 must have this dimension collected
+    request.dimensionFilter = {
+      filter: {
+        fieldName: "campaignId",
+        stringFilter: {
+          value: filters.campaignId,
+          matchType: "EXACT",
+        },
+      },
+    };
+  }
+
+  const [response] = await analyticsDataClient.runReport(request);
+
+  return {
+    data: formatGAResponse(response),
+  };
 }
+
 
 function formatGAResponse(response) {
   if (!response.rows || response.rows.length === 0) {
@@ -29,17 +71,19 @@ function formatGAResponse(response) {
       6
     )}-${dateStr.slice(6, 8)}`;
 
-    // Sum of all metrics in that row
-    const count = row.metricValues
-      .map((val) => Number(val.value))
-      .reduce((acc, curr) => acc + curr, 0);
-
+    // return metrics with proper mapping
     return {
       date: formattedDate,
-      count,
+      activeUsers: Number(row.metricValues[0].value),
+      sessions: Number(row.metricValues[1].value),
+      engagedSessions: Number(row.metricValues[2].value),
+      screenPageViews: Number(row.metricValues[3].value),
+      averageSessionDuration: Number(row.metricValues[4].value),
+      bounceRate: Number(row.metricValues[5].value),
     };
   });
 }
+
 
 module.exports = {
     fetchGAReport,

@@ -35,7 +35,7 @@ const getCampaignListCount = async (req, res, next) => {
 
 const getOurChart = async (req, res, next) => {
   try {
-    const validatedQuery = validate(dashBoardDto.getCampaigChartSchema, req.query);
+    const validatedQuery = validate(dashBoardDto.getCampaigChartSchema, req.body);
 
     const result = await dashBoardService.getOurChart(validatedQuery);
 
@@ -48,8 +48,25 @@ const getOurChart = async (req, res, next) => {
   }
 };
 
+const getThirdPartyChart = async (req, res, next) => {
+  try {
+    const validatedQuery = validate(dashBoardDto.getCampaigChartSchema, req.body);
+
+    const result = await dashBoardService.getThirdPartyChart(validatedQuery);
+
+    res.status(200).json({
+      message: "Chart data fetched successfully",
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 module.exports = {
   getCampaignList,
   getCampaignListCount,
   getOurChart,
+  getThirdPartyChart,
 };

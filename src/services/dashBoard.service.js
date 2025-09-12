@@ -2,6 +2,7 @@ const BonusPageUser = require("../model/bonusPageUser.model");
 const LandingPageUser = require("../model/landingPageUser.model");
 const User = require("../model/user.model");
 const campaignModel = require("../model/campaign.model");
+const { fetchGAReport } = require('./googleAna.service')
 
 async function getCampaignList() {
   // Fetch all campaigns
@@ -106,10 +107,18 @@ async function getThirdPartyChart(filters = {}) {
       query.createdAt.$lte = new Date(filters.to);
     }
   }
-
+  let medium = 'google'
   if(filters.campaignId){
-    const campaignData = await campaignModel.findOne({ campaignId: filters.campaignId }).lean()
+    const campaignData = await campaignModel.findOne({ campaignId: filters.campaignId }).lean();
+    medium = campaignData.medium;
   }
+
+  if(medium === 'google'){
+    return await fetchGAReport(query)
+  }else if(medium === 'facebook'){
+    return []
+  }
+  return []
 }
 
 async function deleteAllData() {
@@ -136,4 +145,5 @@ module.exports = {
   getCampaignList,
   getCampaignListCount,
   getOurChart,
+  getThirdPartyChart,
 };

@@ -31,3 +31,5 @@ Thumbs.db
 # Optional: lock files
 package-lock.json
 yarn.lock
+
+src/secrets/
