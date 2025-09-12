@@ -5,6 +5,7 @@ const createBonusPageUserSchema = Joi.object({
   domain: Joi.string().required(),
   medium: Joi.string().required(),
   campaignId: Joi.string().required(),
+  bonusId: Joi.string().required(),
   campaignName: Joi.string().optional(),
 });
 

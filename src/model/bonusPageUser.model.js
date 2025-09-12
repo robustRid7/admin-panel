@@ -12,6 +12,11 @@ const bonusPageUserSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    bonusId: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     campaignId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Campaign", 

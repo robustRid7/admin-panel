@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema(
       ref: "Campaign",
       required: true,
     },
+    bonusId: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     userId: { type: String, required: true, unique: true },
     userName: { type: String, required: true },
     mobileNumber: { type: String, required: true },

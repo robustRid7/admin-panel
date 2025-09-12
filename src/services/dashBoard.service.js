@@ -93,6 +93,24 @@ async function getOurChart(filters = {}) {
   };
 }
 
+async function getThirdPartyChart(filters = {}) {
+    const query = {};
+
+  // Handle date range filter
+  if (filters.from || filters.to) {
+    query.createdAt = {};
+    if (filters.from) {
+      query.createdAt.$gte = new Date(filters.from);
+    }
+    if (filters.to) {
+      query.createdAt.$lte = new Date(filters.to);
+    }
+  }
+
+  if(filters.campaignId){
+    const campaignData = await campaignModel.findOne({ campaignId: filters.campaignId }).lean()
+  }
+}
 
 async function deleteAllData() {
   try {

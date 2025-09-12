@@ -17,10 +17,18 @@ const landingPageUserSchema = new mongoose.Schema(
       ref: "Campaign", // reference to the Campaign collection
       required: true,
     },
+    bonusId: {
+      type: String,
+      required: true,
+      trim: true,
+    },
   },
   { timestamps: true }
 );
 
-const LandingPageUser = mongoose.model("LandingPageUser", landingPageUserSchema);
+const LandingPageUser = mongoose.model(
+  "LandingPageUser",
+  landingPageUserSchema
+);
 
 module.exports = LandingPageUser;

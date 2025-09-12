@@ -5,6 +5,7 @@ const createUserSchema = Joi.object({
   medium: Joi.string().required(),
   campaignId: Joi.string().required(),
   campaignName: Joi.string().optional(),
+  bonusId: Joi.string().required(),
   userId: Joi.string().alphanum().min(3).max(30).required(),
   userName: Joi.string().min(3).max(50).required(),
   mobileNumber: Joi.any()
