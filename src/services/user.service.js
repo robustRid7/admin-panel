@@ -1,7 +1,7 @@
 const User = require("../model/user.model");
 const AppError = require('../utils/error');
 const jwt = require("jsonwebtoken");
-const { findOrInsertAndReturnId } = require('./campaign.service');
+const { findOrInsertAndReturnId, getCampaignId } = require('./campaign.service');
 
 const createUser = async (userData) => {
   // Check if a user with same userId, mobileNumber, or email already exists
@@ -20,9 +20,11 @@ const createUser = async (userData) => {
 
 const getUsers = async ({ page, limit, filters }) => {
   const skip = (page - 1) * limit;
-
+    if(filters.campaignId){
+    filters.campaignId = await getCampaignId({ campaignId: filters.campaignId })
+  }
   const [users, total] = await Promise.all([
-    User.find(filters).skip(skip).limit(limit),
+    User.find(filters).skip(skip).limit(limit).populate("campaignId"),
     User.countDocuments(filters),
   ]);
 
