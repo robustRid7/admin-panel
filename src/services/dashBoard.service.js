@@ -110,9 +110,10 @@ async function getThirdPartyChart(filters = {}) {
   let medium = "google";
   if (filters.campaignId) {
     const campaignData = await campaignModel
-      .findOne({ campaignId: filters.campaignId })
+      .findOne({ _id: filters.campaignId })
       .lean();
     medium = campaignData.medium;
+    query.campaignId = campaignData.campaignId
   }
 
   if (medium === "google") {

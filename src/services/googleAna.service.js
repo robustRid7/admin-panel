@@ -36,10 +36,10 @@ async function fetchGAReport(filters = {}) {
 
   // Add campaignId filter if passed
   if (filters.campaignId) {
-    request.dimensions.push({ name: "campaignId" }); // GA4 must have this dimension collected
+    request.dimensions.push({ name: "sessionCampaignId" }); // ✅ valid GA4 dimension
     request.dimensionFilter = {
       filter: {
-        fieldName: "campaignId",
+        fieldName: "sessionCampaignId",
         stringFilter: {
           value: filters.campaignId,
           matchType: "EXACT",
@@ -49,10 +49,8 @@ async function fetchGAReport(filters = {}) {
   }
 
   const [response] = await analyticsDataClient.runReport(request);
-
   return formatGAResponse(response);
 }
-
 
 function formatGAResponse(response) {
   if (!response.rows || response.rows.length === 0) {
@@ -79,10 +77,9 @@ function formatGAResponse(response) {
   });
 }
 
-
 module.exports = {
-    fetchGAReport,
-}
+  fetchGAReport,
+};
 
 // const [response] = await analyticsDataClient.runReport({
 //   property: `properties/${propertyId}`,
