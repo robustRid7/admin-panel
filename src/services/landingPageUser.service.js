@@ -22,7 +22,7 @@ const getLandingPageUsers = async ({ page, limit, filters }) => {
   }
 
   const [users, total] = await Promise.all([
-    LandingPageUser.find(filters).skip(skip).limit(limit).populate("campaignId"),
+    LandingPageUser.find(filters).sort({ _id: -1 }).skip(skip).limit(limit).populate("campaignId"),
     LandingPageUser.countDocuments(filters),
   ]);
 

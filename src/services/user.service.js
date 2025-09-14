@@ -33,7 +33,7 @@ const getUsers = async ({ page, limit, filters }) => {
     });
   }
   const [users, total] = await Promise.all([
-    User.find(filters).skip(skip).limit(limit).populate("campaignId"),
+    User.find(filters).sort({ _id: -1 }).skip(skip).limit(limit).populate("campaignId"),
     User.countDocuments(filters),
   ]);
 

@@ -22,7 +22,7 @@ const getBonusPageUsers = async ({ page, limit, filters }) => {
   }
 
   const [users, total] = await Promise.all([
-    BonusPageUser.find(filters).skip(skip).limit(limit).populate("campaignId"),
+    BonusPageUser.find(filters).sort({ _id: -1 }).skip(skip).limit(limit).populate("campaignId"),
     BonusPageUser.countDocuments(filters),
   ]);
 
