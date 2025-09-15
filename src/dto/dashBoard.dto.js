@@ -37,7 +37,7 @@ const getCampaignChartSchema = Joi.object({
 });
 
 const getCampaignListSchema = Joi.object({
-  medium: Joi.string().valid("google", "meta").required(),
+  medium: Joi.string().valid("google", "meta").optional(),
 });
 
 
