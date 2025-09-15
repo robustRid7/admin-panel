@@ -4,6 +4,7 @@ const User = require("../model/user.model");
 const campaignModel = require("../model/campaign.model");
 const { fetchGAReport } = require("./googleAna.service");
 const metaAdsService = require("./facebookAna.service");
+const mongoose = require("mongoose");
 
 async function getCampaignList() {
   // Fetch all campaigns
@@ -42,6 +43,9 @@ async function getCampaignListCount(filters = {}) {
 async function getOurChart(filters = {}) {
   const matchStage = {};
 
+  if (filters.campaignId) {
+    matchStage.campaignId = new mongoose.Types.ObjectId(filters.campaignId);
+  }
   // Handle date range filter
   if (filters.from || filters.to) {
     matchStage.createdAt = {};
@@ -201,7 +205,7 @@ async function getMetaChart(filters = {}) {
         ? ((totalClicks / totalImpressions) * 100).toFixed(2)
         : "0",
       cpc: totalClicks ? (totalSpend / totalClicks).toFixed(2) : "0",
-      reach: totalReach
+      reach: totalReach,
     },
     data,
   };
@@ -226,6 +230,27 @@ async function deleteAllData() {
     console.error("❌ Error deleting data:", err);
   }
 }
+
+("68c7d6cce501da7ddde81fbb");
+async function findCount(id) {
+  const [landingPageUserCount, bonusPageUserCount, userCount] =
+    await Promise.all([
+      LandingPageUser.countDocuments({ campaignId: id }),
+      BonusPageUser.countDocuments({ campaignId: id }),
+      User.countDocuments({ campaignId: id }),
+    ]);
+
+  return {
+    landingPageUserCount,
+    bonusPageUserCount,
+    userCount,
+    total: landingPageUserCount + bonusPageUserCount + userCount,
+  };
+}
+
+// findCount('68c7d6cce501da7ddde81fbb')
+//   .then(res => console.log("Counts:", res))
+//   .catch(err => console.error(err));
 
 module.exports = {
   getCampaignList,
