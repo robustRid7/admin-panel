@@ -7,13 +7,17 @@ const accountId = `act_${process.env.FB_AD_ACCOUNT_ID}`;
 
 bizSdk.FacebookAdsApi.init(accessToken);
 
+function formatDate(date) {
+  return date.toISOString().split("T")[0];
+}
+
 async function fetchFBAdsReport(filters = {}) {
   const adAccount = new AdAccount(accountId);
 
   // Default date range
   let timeRange = {
-    since: filters.from || "2025-09-01",
-    until: filters.to || "2025-09-13",
+    since: formatDate(filters.from),
+    until: formatDate(filters.to),
   };
 
   // Fields (metrics you want day-wise)
