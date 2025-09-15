@@ -6,9 +6,19 @@ const { fetchGAReport } = require("./googleAna.service");
 const metaAdsService = require("./facebookAna.service");
 const mongoose = require("mongoose");
 
-async function getCampaignList() {
+async function getCampaignList({ medium }) {
+  let query = {};
+  if (medium) {
+    let item = [];
+    if (medium == "google") {
+      item = ["google"];
+    } else if (medium == "meta") {
+      item = ["facebook", "fb", "ig"];
+    }
+    query.medium = { $in: item }
+  }
   // Fetch all campaigns
-  const list = await campaignModel.find().lean();
+  const list = await campaignModel.find(query).lean();
   return list; // return to caller
 }
 
@@ -231,22 +241,6 @@ async function deleteAllData() {
   }
 }
 
-("68c7d6cce501da7ddde81fbb");
-async function findCount(id) {
-  const [landingPageUserCount, bonusPageUserCount, userCount] =
-    await Promise.all([
-      LandingPageUser.countDocuments({ campaignId: id }),
-      BonusPageUser.countDocuments({ campaignId: id }),
-      User.countDocuments({ campaignId: id }),
-    ]);
-
-  return {
-    landingPageUserCount,
-    bonusPageUserCount,
-    userCount,
-    total: landingPageUserCount + bonusPageUserCount + userCount,
-  };
-}
 
 // findCount('68c7d6cce501da7ddde81fbb')
 //   .then(res => console.log("Counts:", res))

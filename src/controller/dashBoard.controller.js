@@ -4,9 +4,8 @@ const dashBoardDto = require('../dto/dashBoard.dto')
 
 const getCampaignList = async (req, res, next) => {
   try {
-    // if you need query validation, plug schema here
-
-    const result = await dashBoardService.getCampaignList();
+    const validatedQuery = validate(dashBoardDto.getCampaignListSchema, req.body)
+    const result = await dashBoardService.getCampaignList(validatedQuery);
 
     res.status(200).json({
       message: "Campaign list fetched successfully",
