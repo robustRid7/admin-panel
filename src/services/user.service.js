@@ -27,14 +27,29 @@ const createUser = async (userData) => {
 
 const getUsers = async ({ page, limit, filters }) => {
   const skip = (page - 1) * limit;
+  let query = {};
   if (filters.campaignId) {
-    filters.campaignId = await getCampaignId({
+    query.campaignId = await getCampaignId({
       campaignId: filters.campaignId,
     });
   }
+
+  if (filters.from || filters.to) {
+    query.createdAt = {};
+    if (filters.from) {
+      query.createdAt.$gte = new Date(filters.from);
+    }
+    if (filters.to) {
+      query.createdAt.$lte = new Date(filters.to);
+    }
+  }
   const [users, total] = await Promise.all([
-    User.find(filters).sort({ _id: -1 }).skip(skip).limit(limit).populate("campaignId"),
-    User.countDocuments(filters),
+    User.find(query)
+      .sort({ _id: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("campaignId"),
+    User.countDocuments(query),
   ]);
 
   return {
@@ -76,7 +91,6 @@ module.exports = {
   getUsers,
   loginAdmin,
 };
-
 
 // const mongoose = require("mongoose");
 

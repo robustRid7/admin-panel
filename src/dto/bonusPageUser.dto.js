@@ -9,15 +9,35 @@ const createBonusPageUserSchema = Joi.object({
   campaignName: Joi.string().optional(),
 });
 
+const base = Joi.object({
+  campaignId: Joi.string().hex().length(24).optional().allow(null),
+
+  // 'to' defaults to today
+  to: Joi.date()
+    .iso()
+    .optional()
+    .allow(null)
+    .empty(null)
+    .default(() => new Date()),
+
+  // 'from' defaults to 7 days before today
+  from: Joi.date()
+    .iso()
+    .optional()
+    .allow(null)
+    .empty(null)
+    .default(() => {
+      const d = new Date();
+      d.setDate(d.getDate() - 7);
+      return d;
+    }),
+});
+
 // Get DTO (pagination)
 const getBonusPageUsersSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100000).default(1000),
-  filters: Joi.object({
-    domain: Joi.string().optional(),
-    medium: Joi.string().optional(),
-    campaignId: Joi.string().optional()
-  }).default({}) // default to empty object if no filters
+  filters: base.default({}), // default to empty object if no filters
 });
 
 module.exports = {
