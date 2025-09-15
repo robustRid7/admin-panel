@@ -15,7 +15,7 @@ async function getCampaignList({ medium }) {
     } else if (medium == "meta") {
       item = ["facebook", "fb", "ig"];
     }
-    query.medium = { $in: item }
+    query.medium = { $in: item };
   }
   // Fetch all campaigns
   const list = await campaignModel.find(query).lean();
@@ -189,6 +189,12 @@ async function getThirdPartyChart(filters = {}) {
 }
 
 async function getMetaChart(filters = {}) {
+  if (filters.campaignId) {
+    const campaignData = await campaignModel
+      .findOne({ _id: filters.campaignId })
+      .lean();
+    filters.campaignId = campaignData.campaignId;
+  }
   const data = await metaAdsService.fetchFBAdsReport(filters);
 
   let totalImpressions = 0;
@@ -240,7 +246,6 @@ async function deleteAllData() {
     console.error("❌ Error deleting data:", err);
   }
 }
-
 
 // findCount('68c7d6cce501da7ddde81fbb')
 //   .then(res => console.log("Counts:", res))
