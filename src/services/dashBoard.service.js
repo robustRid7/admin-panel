@@ -90,9 +90,17 @@ async function getOurChart(filters = {}) {
   //   users: formatData(userData),
   // };
 
-  const bonusPageUserCount = bonusPageData.reduce((acc) => acc + 1, 0);
-  const landingPageUserCount = landingPageData.reduce((acc) => acc + 1, 0);
-  const userCount = userData.reduce((acc) => acc + 1, 0);
+  const bonusPageUserCount = bonusPageData.reduce(
+    (acc, item) => acc + (item.count || 0),
+    0
+  );
+
+  const landingPageUserCount = landingPageData.reduce(
+    (acc, item) => acc + (item.count || 0),
+    0
+  );
+
+  const userCount = userData.reduce((acc, item) => acc + (item.count || 0), 0);
 
   return {
     bonusPageUsers: bonusPageData,
