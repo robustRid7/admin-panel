@@ -3,7 +3,7 @@ const AdAccount = bizSdk.AdAccount;
 const AdsInsights = bizSdk.AdsInsights;
 
 const accessToken = process.env.FB_ACCESS_TOKEN;
-const accountId = process.env.FB_AD_ACCOUNT_ID;
+const accountId = `act_${process.env.FB_AD_ACCOUNT_ID}`;
 
 bizSdk.FacebookAdsApi.init(accessToken);
 
@@ -20,12 +20,18 @@ async function fetchFBAdsReport(filters = {}) {
   const fields = [
     "date_start",
     "date_stop",
+    "campaign_id",
+    "campaign_name",
     "impressions",
     "clicks",
     "spend",
     "cpc",
     "ctr",
     "conversions",
+    "reach",
+    "frequency",
+    "cpp",
+    "unique_clicks",
   ];
 
   // Params
@@ -44,59 +50,82 @@ async function fetchFBAdsReport(filters = {}) {
       : [],
   };
 
-  try {
-    const data = await adAccount.getInsights(fields, params);
-    return data.map((row) => row._data);
-  } catch (err) {
-    console.error("Error fetching Facebook Ads report:", err);
-    throw err;
+  const data = await adAccount.getInsights(fields, params);
+  const modifiedMapData =  data.map((row) => row._data);
+  if(!filters.campaignId){
+       return aggregateByDate(modifiedMapData)
   }
+  return modifiedMapData
+}
+
+function aggregateByDate(data) {
+  const result = {};
+
+  data.forEach((item) => {
+    const date = item.date_start;
+
+    if (!result[date]) {
+      // Initialize object for this date
+      result[date] = {
+        date_start: date,
+        date_stop: item.date_stop,
+        impressions: 0,
+        clicks: 0,
+        spend: 0,
+        cpc: 0, // will calculate after summing
+        ctr: 0, // will calculate after summing
+        conversions: [],
+        reach: 0,
+        frequency: 0, // we will take weighted avg
+        cpp: 0, // will calculate after summing
+        unique_clicks: 0,
+      };
+    }
+
+    // Sum numeric metrics
+    result[date].impressions += Number(item.impressions || 0);
+    result[date].clicks += Number(item.clicks || 0);
+    result[date].spend += Number(item.spend || 0);
+    result[date].reach += Number(item.reach || 0);
+    result[date].unique_clicks += Number(item.unique_clicks || 0);
+
+    // Merge conversions
+    if (item.conversions && item.conversions.length) {
+      result[date].conversions.push(...item.conversions);
+    }
+
+    // Weighted average for frequency
+    result[date].frequency +=
+      (Number(item.frequency || 0) * Number(item.reach || 0)) /
+      (result[date].reach || 1); // avoid divide by 0
+  });
+
+  // After summing, calculate derived metrics
+  Object.values(result).forEach((item) => {
+    item.cpc = item.clicks ? (item.spend / item.clicks).toFixed(6) : "0";
+    item.ctr = item.impressions
+      ? ((item.clicks / item.impressions) * 100).toFixed(6)
+      : "0";
+    item.cpp = item.conversions.length
+      ? (item.spend / item.conversions.length).toFixed(6)
+      : "0";
+  });
+
+  // Return as array
+  return Object.values(result);
 }
 
 // Example usage
-(async () => {
-  const report = await fetchFBAdsReport({
-    from: "2025-09-01",
-    to: "2025-09-12",
-    campaignId: "123456789012345",
-  });
-  console.log(report);
-})();
+// (async () => {
+//   const report = await fetchFBAdsReport({
+//     from: "2025-09-01",
+//     to: "2025-09-15",
+//     // campaignId: "123456789012345",
+//   });
+//   console.log(report);
+// })();
 
+module.exports = {
+  fetchFBAdsReport,
+};
 
-// [
-//   {
-//     "campaign_id": "123456789012345",
-//     "campaign_name": "My Test Campaign",
-//     "impressions": "10500",
-//     "clicks": "230",
-//     "spend": "45.32",
-//     "cpc": "0.19",
-//     "ctr": "2.19",
-//     "conversions": "12"
-//   }
-// ]
-
-
-// [
-//   {
-//     "date_start": "2025-09-01",
-//     "date_stop": "2025-09-01",
-//     "impressions": "1200",
-//     "clicks": "25",
-//     "spend": "5.10",
-//     "ctr": "2.08",
-//     "cpc": "0.20",
-//     "conversions": "1"
-//   },
-//   {
-//     "date_start": "2025-09-02",
-//     "date_stop": "2025-09-02",
-//     "impressions": "1400",
-//     "clicks": "32",
-//     "spend": "6.25",
-//     "ctr": "2.28",
-//     "cpc": "0.19",
-//     "conversions": "3"
-//   }
-// ]

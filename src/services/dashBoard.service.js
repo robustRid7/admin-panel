@@ -3,6 +3,7 @@ const LandingPageUser = require("../model/landingPageUser.model");
 const User = require("../model/user.model");
 const campaignModel = require("../model/campaign.model");
 const { fetchGAReport } = require("./googleAna.service");
+const metaAdsService = require('./facebookAna.service');
 
 async function getCampaignList() {
   // Fetch all campaigns
@@ -156,6 +157,35 @@ async function getThirdPartyChart(filters = {}) {
   return [];
 }
 
+
+async function getMetaChart(filters = {}) {
+  const data = await metaAdsService.fetchFBAdsReport(filters);
+
+  let totalImpressions = 0;
+  let totalClicks = 0;
+  let totalSpend = 0;
+  let totalUniqueClicks = 0;
+
+  data.forEach((item) => {
+    totalImpressions += Number(item.impressions || 0);
+    totalClicks += Number(item.clicks || 0);
+    totalSpend += Number(item.spend || 0);
+    totalUniqueClicks += Number(item.unique_clicks || 0);
+  });
+
+  return {
+    totals: {
+      impressions: totalImpressions,
+      clicks: totalClicks,
+      spend: totalSpend,
+      unique_clicks: totalUniqueClicks,
+      ctr: totalImpressions ? ((totalClicks / totalImpressions) * 100).toFixed(2) : "0",
+      cpc: totalClicks ? (totalSpend / totalClicks).toFixed(2) : "0",
+    },
+    data, 
+  }
+}
+
 async function deleteAllData() {
   try {
     await BonusPageUser.deleteMany({});
@@ -181,4 +211,5 @@ module.exports = {
   getCampaignListCount,
   getOurChart,
   getThirdPartyChart,
+  getMetaChart,
 };

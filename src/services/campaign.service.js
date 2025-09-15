@@ -35,6 +35,25 @@ async function getCampaignId({ campaignId, campaignName }) {
 
   return data._id;
 }
+
+
+async function getNonGoogleCampaignIds() {
+  try {
+    const campaignIds = await campaignModel.distinct("campaignId", {
+      medium: { $in: ["fb", "ig", "facebook"] },
+    });
+
+    if (!campaignIds.length) {
+      throw new AppError(404, "No campaigns found for FB/IG");
+    }
+
+    return campaignIds;
+  } catch (err) {
+    console.error("Error fetching campaign IDs:", err);
+    throw err;
+  }
+}
+
 module.exports = {
   findOrInsertAndReturnId,
   getCampaignId,
