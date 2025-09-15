@@ -181,12 +181,14 @@ async function getMetaChart(filters = {}) {
   let totalClicks = 0;
   let totalSpend = 0;
   let totalUniqueClicks = 0;
+  let totalReach = 0;
 
   data.forEach((item) => {
     totalImpressions += Number(item.impressions || 0);
     totalClicks += Number(item.clicks || 0);
     totalSpend += Number(item.spend || 0);
     totalUniqueClicks += Number(item.unique_clicks || 0);
+    totalReach += Number(item.reach || 0);
   });
 
   return {
@@ -199,6 +201,7 @@ async function getMetaChart(filters = {}) {
         ? ((totalClicks / totalImpressions) * 100).toFixed(2)
         : "0",
       cpc: totalClicks ? (totalSpend / totalClicks).toFixed(2) : "0",
+      reach: totalReach
     },
     data,
   };
