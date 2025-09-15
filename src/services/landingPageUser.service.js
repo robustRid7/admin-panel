@@ -22,7 +22,7 @@ const getLandingPageUsers = async ({ page, limit, filters }) => {
   const skip = (page - 1) * limit;
   let query = {};
   if (filters.campaignId) {
-    query.campaignId = await getCampaignId({ campaignId: filters.campaignId });
+    query.campaignId = filters.campaignId;
   }
 
   if (filters.from || filters.to) {
