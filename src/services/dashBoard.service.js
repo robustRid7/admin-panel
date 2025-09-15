@@ -11,7 +11,7 @@ async function getCampaignList() {
 }
 
 async function getCampaignListCount(filters = {}) {
-  const { from, to, ...query } = filters; 
+  const { from, to, ...query } = filters;
 
   // Handle date range filter
   if (filters.from || filters.to) {
@@ -48,7 +48,9 @@ async function getOurChart(filters = {}) {
       matchStage.createdAt.$gte = new Date(filters.from);
     }
     if (filters.to) {
-      matchStage.createdAt.$lte = new Date(filters.to);
+      const toDate = new Date(filters.to);
+      toDate.setDate(toDate.getDate() + 1); // add 1 day
+      matchStage.createdAt.$lte = toDate;
     }
   }
 
@@ -113,8 +115,8 @@ async function getThirdPartyChart(filters = {}) {
       .findOne({ _id: filters.campaignId })
       .lean();
     medium = campaignData.medium;
-    query.campaignId = campaignData.campaignId
-    filters.campaignId = campaignData.campaignId
+    query.campaignId = campaignData.campaignId;
+    filters.campaignId = campaignData.campaignId;
   }
 
   if (medium === "google") {
@@ -138,9 +140,7 @@ async function getThirdPartyChart(filters = {}) {
 
     // Compute average session duration
     const avgSessionDuration =
-      graphData.length > 0
-        ? totalSessionDuration / graphData.length
-        : 0;
+      graphData.length > 0 ? totalSessionDuration / graphData.length : 0;
 
     return {
       graphData,
