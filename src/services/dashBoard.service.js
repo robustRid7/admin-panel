@@ -3,7 +3,7 @@ const LandingPageUser = require("../model/landingPageUser.model");
 const User = require("../model/user.model");
 const campaignModel = require("../model/campaign.model");
 const { fetchGAReport } = require("./googleAna.service");
-const metaAdsService = require('./facebookAna.service');
+const metaAdsService = require("./facebookAna.service");
 
 async function getCampaignList() {
   // Fetch all campaigns
@@ -90,10 +90,19 @@ async function getOurChart(filters = {}) {
   //   users: formatData(userData),
   // };
 
+  const bonusPageUserCount = bonusPageData.reduce((acc) => acc + 1, 0);
+  const landingPageUserCount = landingPageData.reduce((acc) => acc + 1, 0);
+  const userCount = userData.reduce((acc) => acc + 1, 0);
+
   return {
     bonusPageUsers: bonusPageData,
     landingPageUsers: landingPageData,
     users: userData,
+    totals: {
+      bonusPageUserCount,
+      landingPageUserCount,
+      userCount,
+    },
   };
 }
 
@@ -157,7 +166,6 @@ async function getThirdPartyChart(filters = {}) {
   return [];
 }
 
-
 async function getMetaChart(filters = {}) {
   const data = await metaAdsService.fetchFBAdsReport(filters);
 
@@ -179,11 +187,13 @@ async function getMetaChart(filters = {}) {
       clicks: totalClicks,
       spend: totalSpend,
       unique_clicks: totalUniqueClicks,
-      ctr: totalImpressions ? ((totalClicks / totalImpressions) * 100).toFixed(2) : "0",
+      ctr: totalImpressions
+        ? ((totalClicks / totalImpressions) * 100).toFixed(2)
+        : "0",
       cpc: totalClicks ? (totalSpend / totalClicks).toFixed(2) : "0",
     },
-    data, 
-  }
+    data,
+  };
 }
 
 async function deleteAllData() {
