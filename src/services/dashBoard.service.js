@@ -18,7 +18,10 @@ async function getCampaignList({ medium }) {
     query.medium = { $in: item };
   }
   // Fetch all campaigns
-  const list = await campaignModel.find(query).lean();
+  const list = await campaignModel
+    .find(query)
+    .sort({ _id: -1 }) // -1 = descending, 1 = ascending
+    .lean();
   return list; // return to caller
 }
 
