@@ -27,6 +27,16 @@ const landingPageUserSchema = new mongoose.Schema(
       required: false,
       trim: true,
     },
+    origin: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    referer: {
+      type: String,
+      required: false,
+      trim: true,
+    },
   },
   { timestamps: true }
 );

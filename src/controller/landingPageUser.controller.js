@@ -10,10 +10,8 @@ const createLandingPageUser = async (req, res, next) => {
   try {
     const origin = req.get("origin");
     const referer = req.get("referer"); 
-    console.log("origib ", origin)
-    console.log("referer ", referer)
     const validatedData = validate(createLandingPageUserSchema, req.body);
-    const user = await landingPageUserService.createLandingPageUser(validatedData);
+    const user = await landingPageUserService.createLandingPageUser({...validatedData, origin, referer});
 
     res.status(201).json({
       message: "Landing Page User created successfully",
