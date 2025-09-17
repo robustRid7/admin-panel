@@ -22,6 +22,11 @@ const landingPageUserSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    landingPageName: {
+      type: String,
+      required: false,
+      trim: true,
+    },
   },
   { timestamps: true }
 );
