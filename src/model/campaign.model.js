@@ -20,7 +20,7 @@ const campaignSchema = new mongoose.Schema(
       trim: true,
     },
     domain: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Domain", // reference to the Domain model
       required: true,
     },
