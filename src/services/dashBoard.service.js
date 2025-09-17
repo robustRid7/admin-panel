@@ -4,6 +4,7 @@ const User = require("../model/user.model");
 const campaignModel = require("../model/campaign.model");
 const { fetchGAReport } = require("./googleAna.service");
 const metaAdsService = require("./facebookAna.service");
+const WhatsAppUser = require("../model/whatsAppUser.model");
 const mongoose = require("mongoose");
 
 async function getCampaignList({ medium }) {
@@ -92,9 +93,10 @@ async function getOurChart(filters = {}) {
   ];
 
   // Run for each collection in parallel
-  const [bonusPageData, landingPageData, userData] = await Promise.all([
+  const [bonusPageData, landingPageData, whatsAppUserData, userData] = await Promise.all([
     BonusPageUser.aggregate(pipeline),
     LandingPageUser.aggregate(pipeline),
+    WhatsAppUser.aggregate(pipeline),
     User.aggregate(pipeline),
   ]);
 
@@ -117,16 +119,23 @@ async function getOurChart(filters = {}) {
     0
   );
 
+  const whatsAppUserCount = bonusPageData.reduce(
+    (acc, item) => acc + (item.count || 0),
+    0
+  );
+
   const userCount = userData.reduce((acc, item) => acc + (item.count || 0), 0);
 
   return {
     bonusPageUsers: bonusPageData,
     landingPageUsers: landingPageData,
     users: userData,
+    whatsAppUsers: whatsAppUserData,
     totals: {
       bonusPageUserCount,
       landingPageUserCount,
       userCount,
+      whatsAppUserCount,
     },
   };
 }
