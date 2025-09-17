@@ -119,7 +119,7 @@ async function getOurChart(filters = {}) {
     0
   );
 
-  const whatsAppUserCount = bonusPageData.reduce(
+  const whatsAppUserCount = whatsAppUserData.reduce(
     (acc, item) => acc + (item.count || 0),
     0
   );
