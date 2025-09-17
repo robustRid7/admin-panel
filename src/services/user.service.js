@@ -19,6 +19,7 @@ const createUser = async (userData) => {
     campaignId: userData.campaignId,
     campaignName: userData.campaignName,
     medium: userData.medium,
+    domain: userData.domain,
   });
   userData.campaignId = campaignId;
   const user = new User(userData);

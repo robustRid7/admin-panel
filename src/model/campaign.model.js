@@ -19,6 +19,11 @@ const campaignSchema = new mongoose.Schema(
       unique: true, 
       trim: true,
     },
+    domain: {
+      type: Schema.Types.ObjectId,
+      ref: "Domain", // reference to the Domain model
+      required: true,
+    },
   },
   { timestamps: true } // adds createdAt & updatedAt
 );

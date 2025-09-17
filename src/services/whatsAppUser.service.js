@@ -1,12 +1,11 @@
-const BonusPageUser = require("../model/bonusPageUser.model");
+const WhatsAppUser = require('../model/whatsAppUser.model');
 const AppError = require("../utils/error");
 const {
   findOrInsertAndReturnId,
   getCampaignId,
 } = require("./campaign.service");
 
-// Create Bonus Page User
-const createBonusPageUser = async (data) => {
+const createWhatsAppUser = async (data) => {
   const campaignId = await findOrInsertAndReturnId({
     campaignId: data.campaignId,
     campaignName: data.campaignName,
@@ -14,12 +13,12 @@ const createBonusPageUser = async (data) => {
     domain: data.domain,
   });
   data.campaignId = campaignId;
-  const bonusPageUser = new BonusPageUser(data);
+  const bonusPageUser = new WhatsAppUser(data);
   return await bonusPageUser.save();
 };
 
 // Get Bonus Page Users with pagination
-const getBonusPageUsers = async ({ page, limit, filters }) => {
+const getWhatsAppUsers = async ({ page, limit, filters }) => {
   const skip = (page - 1) * limit;
   let query = {};
   if (filters.campaignId) {
@@ -37,12 +36,12 @@ const getBonusPageUsers = async ({ page, limit, filters }) => {
   }
 
   const [users, total] = await Promise.all([
-    BonusPageUser.find(query)
+    WhatsAppUser.find(query)
       .sort({ _id: -1 })
       .skip(skip)
       .limit(limit)
       .populate("campaignId"),
-    BonusPageUser.countDocuments(query),
+    WhatsAppUser.countDocuments(query),
   ]);
 
   return {
@@ -57,6 +56,6 @@ const getBonusPageUsers = async ({ page, limit, filters }) => {
 };
 
 module.exports = {
-  createBonusPageUser,
-  getBonusPageUsers,
-};
+  createWhatsAppUser,
+  getWhatsAppUsers
+}

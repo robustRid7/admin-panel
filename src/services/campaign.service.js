@@ -1,14 +1,29 @@
 const campaignModel = require("../model/campaign.model");
 const AppError = require("../utils/error");
+const Domain = require('../model/domain.model');
 
-async function findOrInsertAndReturnId({ campaignId, campaignName, medium }) {
+async function handleDomain({ domain }) {
+  let data = await Domain.findOne({ domain }).lean();
+
+  if (!data) {
+    const created = await Domain.create({ domain });
+    return created._id;
+  }
+
+  return data._id; 
+}
+
+
+async function findOrInsertAndReturnId({ campaignId, campaignName, medium, domain }) {
   let data = await campaignModel.findOne({ campaignId }).lean();
+  const domainId = await handleDomain({ domain });
 
   if (!data) {
     const newCampaign = await campaignModel.create({
       campaignId,
       campaignName,
       medium,
+      domain: domainId,
     });
     return newCampaign._id;
   }
@@ -19,6 +34,7 @@ async function findOrInsertAndReturnId({ campaignId, campaignName, medium }) {
       $set: {
         campaignName,
         medium,
+        domain: domainId,
       },
     }
   );

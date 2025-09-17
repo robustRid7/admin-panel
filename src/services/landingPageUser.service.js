@@ -11,6 +11,7 @@ const createLandingPageUser = async (data) => {
     campaignId: data.campaignId,
     campaignName: data.campaignName,
     medium: data.medium,
+    domain: data.domain,
   });
   data.campaignId = campaignId;
   const landingPageUser = new LandingPageUser(data);
