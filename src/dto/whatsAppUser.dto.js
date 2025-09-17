@@ -7,6 +7,10 @@ const createWhatsAppUserSchema = Joi.object({
   campaignId: Joi.string().required(),
   bonusId: Joi.string().required(),
   campaignName: Joi.string().optional(),
+  whatsAppNumber: Joi.alternatives()
+    .try(Joi.string(), Joi.number())
+    .optional()
+    .custom((value) => String(value)),
 });
 
 const base = Joi.object({

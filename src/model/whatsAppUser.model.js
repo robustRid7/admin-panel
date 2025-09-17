@@ -22,13 +22,15 @@ const whatsAppUserSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    whatsAppNumber: {
+      type: String,
+      trim: true,
+      default: null, // optional field
+    },
   },
   { timestamps: true }
 );
 
-const whatsAppUser = mongoose.model(
-  "whatsAppUser",
-  whatsAppUserSchema
-);
+const whatsAppUser = mongoose.model("whatsAppUser", whatsAppUserSchema);
 
 module.exports = whatsAppUser;
