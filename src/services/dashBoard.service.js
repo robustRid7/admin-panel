@@ -190,7 +190,7 @@ async function getThirdPartyChart(filters = {}) {
       query.createdAt.$lte = new Date(filters.to);
     }
   }
-  let medium = "google";
+  let medium = 1;
 
   const cIds = await handleCampaignIdsViaDomain({
     campaignId: filters.campaignId,
