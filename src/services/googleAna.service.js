@@ -196,7 +196,11 @@ async function getGoogleCampaignStats(filters = {}) {
 
     // Run GAQL query
     const response = await customer.query(query);
-
+    if(!filters.campaignId){
+        const data = aggregateCampaignStatsByDate(response);
+        console.log(data);
+        return data;
+    }
     // Transform into structured JSON
     return response;
   } catch (err) {
@@ -205,11 +209,72 @@ async function getGoogleCampaignStats(filters = {}) {
   }
 }
 
-// getGoogleCampaignStats({
-//   campaignId: "22982762812",
-//   from: "2025-01-01",
-//   to: "2025-09-18",
-// });
+function aggregateCampaignStatsByDate(data) {
+  const aggregated = {};
+
+  data.forEach((row) => {
+    const date = row.segments?.date ?? null;
+    if (!date) return;
+
+    if (!aggregated[date]) {
+      aggregated[date] = {
+        campaign: {
+          resource_name: 'aggregated', // placeholder
+          name: 'Aggregated Data',
+          id: 0,
+        },
+        metrics: {
+          impressions: 0,
+          clicks: 0,
+          conversions: 0,
+          search_impression_share: 0,
+          cost_micros: 0,
+          average_cpc: 0,
+        },
+        segments: {
+          device: null,
+          ad_network_type: null,
+          day_of_week: null,
+          date: date,
+          hour: null,
+        },
+      };
+    }
+
+    const item = aggregated[date];
+
+    // Sum numeric metrics safely
+    item.metrics.impressions += Number(row.metrics?.impressions ?? 0);
+    item.metrics.clicks += Number(row.metrics?.clicks ?? 0);
+    item.metrics.conversions += Number(row.metrics?.conversions ?? 0);
+    item.metrics.search_impression_share += Number(row.metrics?.search_impression_share ?? 0);
+    item.metrics.cost_micros += Number(row.metrics?.cost_micros ?? 0);
+
+    // Recalculate average CPC as weighted by clicks (if any)
+    const totalClicks = item.metrics.clicks;
+    item.metrics.average_cpc =
+      totalClicks > 0
+        ? item.metrics.cost_micros / totalClicks
+        : 0;
+
+    // For segments, take first non-null value or leave as null
+    item.segments.device = item.segments.device ?? row.segments?.device ?? null;
+    item.segments.ad_network_type =
+      item.segments.ad_network_type ?? row.segments?.ad_network_type ?? null;
+    item.segments.day_of_week =
+      item.segments.day_of_week ?? row.segments?.day_of_week ?? null;
+    item.segments.hour = item.segments.hour ?? row.segments?.hour ?? null;
+  });
+
+  return Object.values(aggregated);
+}
+
+getGoogleCampaignStats({
+  // campaignId: "22982762812",
+  from: "2025-01-01",
+  to: "2025-09-18",
+});
+
 
 module.exports = {
   fetchGAReport,
