@@ -194,9 +194,10 @@ async function getThirdPartyChart(filters = {}) {
     selection: "campaignId",
   });
 
-  if (cIds) {
-    filters.campaignId = cIds;
-  } else if (filters.campaignId) {
+  // if (cIds) {
+  //   filters.campaignId = cIds;
+  // } else
+     if (filters.campaignId) {
     const campaignData = await campaignModel
       .findOne({ _id: filters.campaignId })
       .lean();
