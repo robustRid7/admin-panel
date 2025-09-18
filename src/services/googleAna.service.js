@@ -198,8 +198,6 @@ async function getGoogleCampaignStats(filters = {}) {
     const response = await customer.query(query);
 
     // Transform into structured JSON
-
-    console.log(response);
     return response;
   } catch (err) {
     console.error("❌ Error fetching campaign stats:", err);
