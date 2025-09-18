@@ -209,7 +209,7 @@ async function getThirdPartyChart(filters = {}) {
     filters.campaignId = campaignData.campaignId;
   }
 
-  if (medium === "google") {
+  if (medium === 1) {
     const graphData = await fetchGAReport(filters);
 
     // Initialize totals
