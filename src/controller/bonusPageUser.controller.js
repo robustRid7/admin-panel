@@ -9,7 +9,10 @@ const {
 const createBonusPageUser = async (req, res, next) => {
   try {
     const validatedData = validate(createBonusPageUserSchema, req.body);
-    const user = await bonusPageUserService.createBonusPageUser({...validatedData, ip: req.clientIp});
+    const user = await bonusPageUserService.createBonusPageUser({
+      ...validatedData,
+      ...req.clientInfo,
+    });
 
     res.status(201).json({
       message: "Bonus Page User created successfully",
@@ -33,7 +36,6 @@ const getBonusPageUsers = async (req, res, next) => {
     next(err);
   }
 };
-
 
 module.exports = {
   createBonusPageUser,

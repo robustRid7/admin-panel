@@ -4,7 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routes = require("./routes");
 const globalErrorHandler = require("./utils/errorHandler");
-const requestIp = require("request-ip");
+const clientInfo = require('./middleware/clientInfo')
 // const { errorHandler } = require("../shared/utils/asyncHandler");
 
 const app = express();
@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(requestIp.mw());
+app.use(clientInfo);
 
 // // CORS setup
 // const whitelist = [

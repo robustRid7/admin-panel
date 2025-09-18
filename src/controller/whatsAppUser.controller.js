@@ -9,7 +9,10 @@ const {
 const createWhatsAppUser = async (req, res, next) => {
   try {
     const validatedData = validate(createWhatsAppUserSchema, req.body);
-    const user = await whatsAppUserService.createWhatsAppUser({...validatedData, ip:req.clientIp});
+    const user = await whatsAppUserService.createWhatsAppUser({
+      ...validatedData,
+      ...req.clientInfo,
+    });
 
     res.status(201).json({
       message: "WhatsApp User created successfully",
@@ -34,8 +37,7 @@ const getWhatsAppUser = async (req, res, next) => {
   }
 };
 
-
 module.exports = {
   createWhatsAppUser,
-  getWhatsAppUser
+  getWhatsAppUser,
 };

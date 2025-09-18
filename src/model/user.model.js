@@ -23,6 +23,26 @@ const userSchema = new mongoose.Schema(
       required: false, // optional, make true if you always want it
       trim: true,
     },
+    city: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    region: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    country: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    timezone: {
+      type: String,
+      required: false,
+      trim: true,
+    },
     userId: { type: String, required: true, unique: true },
     userName: { type: String, required: true },
     mobileNumber: { type: String, required: true },

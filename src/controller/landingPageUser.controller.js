@@ -9,9 +9,14 @@ const {
 const createLandingPageUser = async (req, res, next) => {
   try {
     const origin = req.get("origin");
-    const referer = req.get("referer"); 
+    const referer = req.get("referer");
     const validatedData = validate(createLandingPageUserSchema, req.body);
-    const user = await landingPageUserService.createLandingPageUser({...validatedData, origin, referer, ip: req.clientIp});
+    const user = await landingPageUserService.createLandingPageUser({
+      ...validatedData,
+      origin,
+      referer,
+      ...req.clientInfo,
+    });
 
     res.status(201).json({
       message: "Landing Page User created successfully",
@@ -25,7 +30,9 @@ const createLandingPageUser = async (req, res, next) => {
 const getLandingPageUsers = async (req, res, next) => {
   try {
     const validatedQuery = validate(getLandingPageUsersSchema, req.body);
-    const result = await landingPageUserService.getLandingPageUsers(validatedQuery);
+    const result = await landingPageUserService.getLandingPageUsers(
+      validatedQuery
+    );
 
     res.status(200).json({
       message: "Landing Page Users fetched successfully",
