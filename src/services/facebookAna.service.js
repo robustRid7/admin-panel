@@ -20,6 +20,24 @@ async function fetchFBAdsReport(filters = {}) {
     until: formatDate(filters.to),
   };
 
+  let filtering = [];
+
+  if (filters.campaignId) {
+    if (Array.isArray(filters.campaignId) && filters.campaignId.length > 0) {
+      filtering.push({
+        field: "campaign.id",
+        operator: "IN",
+        value: filters.campaignId,
+      });
+    } else {
+      filtering.push({
+        field: "campaign.id",
+        operator: "EQUAL",
+        value: filters.campaignId,
+      });
+    }
+  }
+
   // Fields (metrics you want day-wise)
   const fields = [
     "date_start",
@@ -38,36 +56,20 @@ async function fetchFBAdsReport(filters = {}) {
     "unique_clicks",
   ];
 
-  //  [
-  //       {
-  //         field: "campaign.id",
-  //         operator: "IN", // ✅ multiple values
-  //         value: filters.campaignIds, // e.g. [ "123", "456", "789" ]
-  //       },
-  //     ]
 
-  // Params
   const params = {
     time_range: timeRange,
     time_increment: 1, // 🔑 split data by day
     level: "campaign",
-    filtering: filters.campaignId
-      ? [
-          {
-            field: "campaign.id",
-            operator: "EQUAL",
-            value: filters.campaignId,
-          },
-        ]
-      : [],
+    filtering,
   };
 
   const data = await adAccount.getInsights(fields, params);
-  const modifiedMapData =  data.map((row) => row._data);
-  if(!filters.campaignId){
-       return aggregateByDate(modifiedMapData)
+  const modifiedMapData = data.map((row) => row._data);
+  if (!filters.campaignId) {
+    return aggregateByDate(modifiedMapData);
   }
-  return modifiedMapData
+  return modifiedMapData;
 }
 
 function aggregateByDate(data) {
@@ -140,4 +142,3 @@ function aggregateByDate(data) {
 module.exports = {
   fetchFBAdsReport,
 };
-

@@ -49,16 +49,27 @@ async function fetchGAReport(filters = {}) {
 
   // Add campaignId filter if passed
   if (filters.campaignId) {
-    request.dimensions.push({ name: "sessionCampaignId" }); // ✅ valid GA4 dimension
-    request.dimensionFilter = {
-      filter: {
-        fieldName: "sessionCampaignId",
-        stringFilter: {
-          value: filters.campaignId,
-          matchType: "EXACT",
+    request.dimensions.push({ name: "sessionCampaignId" });
+    if (Array.isArray(filters.campaignId)) {
+      request.dimensionFilter = {
+        filter: {
+          fieldName: "sessionCampaignId",
+          inListFilter: {
+            values: filters.campaignId.map(String),
+          },
         },
-      },
-    };
+      };
+    } else {
+      request.dimensionFilter = {
+        filter: {
+          fieldName: "sessionCampaignId",
+          stringFilter: {
+            value: filters.campaignId,
+            matchType: "EXACT",
+          },
+        },
+      };
+    }
   }
 
   const [response] = await analyticsDataClient.runReport(request);
@@ -90,28 +101,28 @@ function formatGAResponse(response) {
   });
 }
 
-  // if (Array.isArray(campaignIds) && campaignIds.length > 0) {
-  //   // Multiple campaign IDs
-  //   const ids = campaignIds.map((id) => `'${id}'`).join(", ");
-  //   condition = `campaign.id IN (${ids})`;
-  // } else if (campaignIds) {
-  //   // Single campaign ID
-  //   condition = `campaign.id = '${campaignIds}'`;
-  // }
+// if (Array.isArray(campaignIds) && campaignIds.length > 0) {
+//   // Multiple campaign IDs
+//   const ids = campaignIds.map((id) => `'${id}'`).join(", ");
+//   condition = `campaign.id IN (${ids})`;
+// } else if (campaignIds) {
+//   // Single campaign ID
+//   condition = `campaign.id = '${campaignIds}'`;
+// }
 
-  // return `
-  //   SELECT
-  //     campaign.id,
-  //     campaign.name,
-  //     metrics.impressions,
-  //     metrics.clicks,
-  //     metrics.conversions,
-  //     metrics.cost_micros,
-  //     metrics.average_cpc
-  //   FROM campaign
-  //   ${condition ? `WHERE ${condition}` : ""}
-  //   ORDER BY metrics.impressions DESC
-  // `;
+// return `
+//   SELECT
+//     campaign.id,
+//     campaign.name,
+//     metrics.impressions,
+//     metrics.clicks,
+//     metrics.conversions,
+//     metrics.cost_micros,
+//     metrics.average_cpc
+//   FROM campaign
+//   ${condition ? `WHERE ${condition}` : ""}
+//   ORDER BY metrics.impressions DESC
+// `;
 
 async function getCampaignStats(campaignId) {
   try {
@@ -139,7 +150,7 @@ async function getCampaignStats(campaignId) {
 }
 
 // Example usage
-//getCampaignStats("123456789"); 
+//getCampaignStats("123456789");
 
 module.exports = {
   fetchGAReport,
@@ -161,8 +172,7 @@ module.exports = {
 //   },
 // });
 
-
-// sameple response 
+// sameple response
 
 // [
 //   {
@@ -199,4 +209,3 @@ module.exports = {
 //   },
 //   ...
 // ]
-

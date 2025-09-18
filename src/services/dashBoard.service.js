@@ -69,12 +69,12 @@ async function handleCampaignIdsViaDomain({
   domain,
   selection = "_id",
 }) {
-  if (campaignId) {
+  if (campaignId || (!campaignId && !domain)) {
     return;
   }
 
   const campaigns = await campaignModel
-    .find({ domain }, { [selection]: 1, _id: 0 })
+    .find({ domain }, { [selection]: 1 })
     .lean();
 
   return campaigns.map((item) => item[selection]);
@@ -87,10 +87,9 @@ async function getOurChart(filters = {}) {
     domain: filters.domain,
   });
 
-  // if (cIds) {
-  //   matchStage.campaignId = { $in: cIds };
-  // } else 
-    if (filters.campaignId) {
+  if (cIds) {
+    matchStage.campaignId = { $in: cIds };
+  } else if (filters.campaignId) {
     matchStage.campaignId = new mongoose.Types.ObjectId(filters.campaignId);
   }
   // Handle date range filter
@@ -195,10 +194,9 @@ async function getThirdPartyChart(filters = {}) {
     selection: "campaignId",
   });
 
-  // if (cIds) {
-  //   filters.campaignId = cIds;
-  // } else
-     if (filters.campaignId) {
+  if (cIds) {
+    filters.campaignId = cIds;
+  } else if (filters.campaignId) {
     const campaignData = await campaignModel
       .findOne({ _id: filters.campaignId })
       .lean();
@@ -245,7 +243,15 @@ async function getThirdPartyChart(filters = {}) {
 }
 
 async function getMetaChart(filters = {}) {
-  if (filters.campaignId) {
+  const cIds = await handleCampaignIdsViaDomain({
+    campaignId: filters.campaignId,
+    domain: filters.domain,
+    selection: "campaignId",
+  });
+
+  if (cIds) {
+    filters.campaignId = cIds;
+  } else if (filters.campaignId) {
     const campaignData = await campaignModel
       .findOne({ _id: filters.campaignId })
       .lean();
