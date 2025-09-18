@@ -269,11 +269,11 @@ function aggregateCampaignStatsByDate(data) {
   return Object.values(aggregated);
 }
 
-getGoogleCampaignStats({
-  // campaignId: "22982762812",
-  from: "2025-01-01",
-  to: "2025-09-18",
-});
+// getGoogleCampaignStats({
+//   // campaignId: "22982762812",
+//   from: "2025-01-01",
+//   to: "2025-09-18",
+// });
 
 
 module.exports = {
