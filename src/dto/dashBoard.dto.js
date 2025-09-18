@@ -1,9 +1,10 @@
 const Joi = require("joi");
+const { mediumType } = require("../utils/enums");
 
 const getCampaignListCountSchema = Joi.object({
   campaignId: Joi.string().hex().length(24).optional().allow(null), // ObjectId or null
   from: Joi.date().iso().optional().allow(null), // ISO date string or null
-  to: Joi.date().iso().optional().allow(null),   // ISO date string or null
+  to: Joi.date().iso().optional().allow(null), // ISO date string or null
 });
 
 // const getCampaignChartSchema = Joi.object({
@@ -38,10 +39,13 @@ const getCampaignChartSchema = Joi.object({
 });
 
 const getCampaignListSchema = Joi.object({
-  medium: Joi.string().valid("google", "meta").optional(),
+  medium: Joi.string()
+    .trim()
+    .lowercase()
+    .valid(...Object.keys(mediumType))
+    .optional(),
   domain: Joi.string().hex().length(24).optional(),
 });
-
 
 module.exports = {
   getCampaignListCountSchema,

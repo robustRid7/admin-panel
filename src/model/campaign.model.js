@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { mediumType } = require("../utils/enums")
 
 const campaignSchema = new mongoose.Schema(
   {
@@ -14,10 +15,9 @@ const campaignSchema = new mongoose.Schema(
       trim: true,
     },
     medium: {
-      type: String,
+      type: Number,
       required: true,
-      unique: true, 
-      trim: true,
+      enum: Object.values(mediumType), 
     },
     domain: {
       type: mongoose.Schema.Types.ObjectId,

@@ -1,10 +1,11 @@
-const dashBoardService = require('../services/dashBoard.service');
+const dashBoardService = require("../services/dashBoard.service");
 const validate = require("../utils/validateDto");
-const dashBoardDto = require('../dto/dashBoard.dto')
+const dashBoardDto = require("../dto/dashBoard.dto");
+const { mediumType } = require("../utils/enums");
 
 const getDomains = async (req, res, next) => {
   try {
-    const result = await dashBoardService.getDomains(); 
+    const result = await dashBoardService.getDomains();
 
     res.status(200).json({
       message: "Domains fetched successfully",
@@ -15,10 +16,13 @@ const getDomains = async (req, res, next) => {
   }
 };
 
-
 const getCampaignList = async (req, res, next) => {
   try {
-    const validatedQuery = validate(dashBoardDto.getCampaignListSchema, req.body)
+    const validatedQuery = validate(
+      dashBoardDto.getCampaignListSchema,
+      req.body
+    );
+    validatedQuery.medium = mediumType[validatedQuery.medium]
     const result = await dashBoardService.getCampaignList(validatedQuery);
 
     res.status(200).json({
@@ -33,7 +37,10 @@ const getCampaignList = async (req, res, next) => {
 const getCampaignListCount = async (req, res, next) => {
   try {
     // validate query/body against DTO
-    const validatedQuery = validate(dashBoardDto.getCampaignListCountSchema, req.body);
+    const validatedQuery = validate(
+      dashBoardDto.getCampaignListCountSchema,
+      req.body
+    );
 
     const result = await dashBoardService.getCampaignListCount(validatedQuery);
 
@@ -48,7 +55,10 @@ const getCampaignListCount = async (req, res, next) => {
 
 const getOurChart = async (req, res, next) => {
   try {
-    const validatedQuery = validate(dashBoardDto.getCampaignChartSchema, req.body);
+    const validatedQuery = validate(
+      dashBoardDto.getCampaignChartSchema,
+      req.body
+    );
 
     const result = await dashBoardService.getOurChart(validatedQuery);
 
@@ -63,7 +73,10 @@ const getOurChart = async (req, res, next) => {
 
 const getThirdPartyChart = async (req, res, next) => {
   try {
-    const validatedQuery = validate(dashBoardDto.getCampaignChartSchema, req.body);
+    const validatedQuery = validate(
+      dashBoardDto.getCampaignChartSchema,
+      req.body
+    );
 
     const result = await dashBoardService.getThirdPartyChart(validatedQuery);
 
@@ -76,10 +89,12 @@ const getThirdPartyChart = async (req, res, next) => {
   }
 };
 
-
 const getMetaChart = async (req, res, next) => {
   try {
-    const validatedQuery = validate(dashBoardDto.getCampaignChartSchema, req.body);
+    const validatedQuery = validate(
+      dashBoardDto.getCampaignChartSchema,
+      req.body
+    );
 
     const result = await dashBoardService.getMetaChart(validatedQuery);
 
@@ -94,9 +109,14 @@ const getMetaChart = async (req, res, next) => {
 
 const getGoogleCampaignDetails = async (req, res, next) => {
   try {
-    const validatedQuery = validate(dashBoardDto.getCampaignChartSchema, req.body);
+    const validatedQuery = validate(
+      dashBoardDto.getCampaignChartSchema,
+      req.body
+    );
 
-    const result = await dashBoardService.getGoogleCampaignDetails(validatedQuery);
+    const result = await dashBoardService.getGoogleCampaignDetails(
+      validatedQuery
+    );
 
     res.status(200).json({
       message: "Chart data fetched successfully",

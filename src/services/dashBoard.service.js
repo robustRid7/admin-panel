@@ -19,13 +19,14 @@ async function getDomains() {
 async function getCampaignList({ medium, domain }) {
   let query = {};
   if (medium) {
-    let item = [];
-    if (medium == "google") {
-      item = ["google"];
-    } else if (medium == "meta") {
-      item = ["facebook", "fb", "ig"];
-    }
-    query.medium = { $in: item };
+    // let item = [];
+    // if (medium == "google") {
+    //   item = ["google"];
+    // } else if (medium == "meta") {
+    //   item = ["facebook", "fb", "ig"];
+    // }
+    // query.medium = { $in: item };
+    query.medium = medium
   }
 
   if (domain) {
