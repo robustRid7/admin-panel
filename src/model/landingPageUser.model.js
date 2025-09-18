@@ -37,6 +37,11 @@ const landingPageUserSchema = new mongoose.Schema(
       required: false,
       trim: true,
     },
+    ip: {
+      type: String,
+      required: false, // optional, make true if you always want it
+      trim: true,
+    },
   },
   { timestamps: true }
 );

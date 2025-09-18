@@ -1,13 +1,19 @@
 const BonusPageUser = require("../model/bonusPageUser.model");
 const LandingPageUser = require("../model/landingPageUser.model");
 const User = require("../model/user.model");
+const Domain = require('../model/domain.model');
 const campaignModel = require("../model/campaign.model");
 const { fetchGAReport } = require("./googleAna.service");
 const metaAdsService = require("./facebookAna.service");
 const WhatsAppUser = require("../model/whatsAppUser.model");
 const mongoose = require("mongoose");
 
-async function getCampaignList({ medium }) {
+async function getDomains() {
+  const data = await Domain.find().lean().exec();
+  return data
+}
+
+async function getCampaignList({ medium, domain }) {
   let query = {};
   if (medium) {
     let item = [];
@@ -17,6 +23,10 @@ async function getCampaignList({ medium }) {
       item = ["facebook", "fb", "ig"];
     }
     query.medium = { $in: item };
+  }
+
+  if(domain){
+    query.domain = domain;
   }
   // Fetch all campaigns
   const list = await campaignModel
@@ -269,4 +279,5 @@ module.exports = {
   getOurChart,
   getThirdPartyChart,
   getMetaChart,
+  getDomains,
 };

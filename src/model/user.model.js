@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    ip: {
+      type: String,
+      required: false, // optional, make true if you always want it
+      trim: true,
+    },
     userId: { type: String, required: true, unique: true },
     userName: { type: String, required: true },
     mobileNumber: { type: String, required: true },

@@ -12,7 +12,7 @@ const createUser = async (req, res, next) => {
     const validatedData = validate(createUserSchema, req.body);
 
     // Call service with validated data
-    const user = await userService.createUser(validatedData);
+    const user = await userService.createUser({...validatedData, ip:req.clientIp});
 
     res.status(201).json({
       message: "User created successfully",

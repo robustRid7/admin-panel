@@ -2,6 +2,20 @@ const dashBoardService = require('../services/dashBoard.service');
 const validate = require("../utils/validateDto");
 const dashBoardDto = require('../dto/dashBoard.dto')
 
+const getDomains = async (req, res, next) => {
+  try {
+    const result = await dashBoardService.getDomains(); 
+
+    res.status(200).json({
+      message: "Domains fetched successfully",
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 const getCampaignList = async (req, res, next) => {
   try {
     const validatedQuery = validate(dashBoardDto.getCampaignListSchema, req.body)
@@ -84,4 +98,5 @@ module.exports = {
   getOurChart,
   getThirdPartyChart,
   getMetaChart,
+  getDomains,
 };

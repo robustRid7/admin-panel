@@ -19,8 +19,13 @@ const bonusPageUserSchema = new mongoose.Schema(
     },
     campaignId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Campaign", 
+      ref: "Campaign",
       required: true,
+    },
+    ip: {
+      type: String,
+      required: false, // optional, make true if you always want it
+      trim: true,
     },
   },
   { timestamps: true }

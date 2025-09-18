@@ -27,6 +27,11 @@ const whatsAppUserSchema = new mongoose.Schema(
       trim: true,
       default: null, // optional field
     },
+    ip: {
+      type: String,
+      required: false, // optional, make true if you always want it
+      trim: true,
+    },
   },
   { timestamps: true }
 );
