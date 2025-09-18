@@ -3,12 +3,14 @@ const requestIp = require("request-ip");
 
 // Middleware to attach client info
 function clientInfoMiddleware(req, res, next) {
+  console.log('dfgsdgg')
   const ip = requestIp.getClientIp(req) || "";
   const geo = geoip.lookup(ip);
+  console.log('here')
 
-  const locale = new Intl.Locale("und", { region: clientInfo.country });
-  const language = locale.maximize().language;
-  console.log("reuested language is: ", language)
+  // const locale = new Intl.Locale("und", { region: clientInfo.country });
+  // const language = locale.maximize().language;
+  // console.log("reuested language is: ", language)
 
   req.clientInfo = {
     ip,
