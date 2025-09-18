@@ -87,9 +87,10 @@ async function getOurChart(filters = {}) {
     domain: filters.domain,
   });
 
-  if (cIds) {
-    matchStage.campaignId = { $in: cIds };
-  } else if (filters.campaignId) {
+  // if (cIds) {
+  //   matchStage.campaignId = { $in: cIds };
+  // } else 
+    if (filters.campaignId) {
     matchStage.campaignId = new mongoose.Types.ObjectId(filters.campaignId);
   }
   // Handle date range filter
