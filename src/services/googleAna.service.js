@@ -3,6 +3,9 @@ require("dotenv").config();
 const { BetaAnalyticsDataClient } = require("@google-analytics/data");
 const propertyId = process.env.PROPERTY_ID ?? 503343569;
 const { GoogleAdsApi } = require("google-ads-api");
+const {
+  campaign,
+} = require("google-ads-api/build/src/protos/autogen/resourceNames");
 
 const client = new GoogleAdsApi({
   client_id: process.env.GOOGLE_ADS_CLIENT_ID,
@@ -124,36 +127,95 @@ function formatGAResponse(response) {
 //   ORDER BY metrics.impressions DESC
 // `;
 
-async function getCampaignStats(campaignId) {
+// async function getGoogleCampaignStats(filters) {
+//   try {
+//     const query = `
+//       SELECT
+//         campaign.id,
+//         campaign.name,
+//         metrics.impressions,
+//         metrics.clicks,
+//         metrics.conversions,
+//         metrics.cost_micros,
+//         metrics.average_cpc
+//       FROM campaign
+//       ORDER BY metrics.impressions DESC
+//     `;
+
+//     const response = await customer.query(query);
+
+//     console.log("📊 Campaign Stats:", response);
+//     return response;
+//   } catch (err) {
+//     console.error("❌ Error fetching campaign stats:", err);
+//   }
+// }
+
+async function getGoogleCampaignStats(filters = {}) {
   try {
-    const query = `
+    let startDate, endDate;
+
+    if (filters.from) {
+      startDate = new Date(filters.from).toISOString().split("T")[0]; // YYYY-MM-DD
+    }
+    if (filters.to) {
+      endDate = new Date(filters.to).toISOString().split("T")[0];
+    }
+
+    // Base query with extra segments + metrics
+    let query = `
       SELECT
-        campaign.id,
-        campaign.name,
-        metrics.impressions,
-        metrics.clicks,
-        metrics.conversions,
-        metrics.cost_micros,
-        metrics.average_cpc
+  campaign.id,
+  campaign.name,
+  segments.date,
+  segments.device,
+  segments.hour,
+  segments.day_of_week,
+  segments.ad_network_type,
+  metrics.impressions,
+  metrics.clicks,
+  metrics.conversions,
+  metrics.search_impression_share,
+  metrics.cost_micros,
+  metrics.average_cpc
       FROM campaign
-      WHERE campaign.id = ${campaignId}
-      ORDER BY metrics.impressions DESC
+      WHERE segments.date BETWEEN '${startDate}' AND '${endDate}'
     `;
 
+    // Add campaign filter
+    if (filters.campaignId) {
+      if (Array.isArray(filters.campaignId) && filters.campaignId.length > 0) {
+        const ids = filters.campaignId.map((id) => id.toString()).join(", ");
+        query += ` AND campaign.id IN (${ids})`;
+      } else {
+        query += ` AND campaign.id = ${filters.campaignId}`;
+      }
+    }
+
+    query += ` ORDER BY segments.date ASC`;
+
+    // Run GAQL query
     const response = await customer.query(query);
 
-    console.log("📊 Campaign Stats:", response);
+    // Transform into structured JSON
+
+    console.log(response);
     return response;
   } catch (err) {
     console.error("❌ Error fetching campaign stats:", err);
+    throw err;
   }
 }
 
-// Example usage
-//getCampaignStats("123456789");
+// getGoogleCampaignStats({
+//   campaignId: "22982762812",
+//   from: "2025-01-01",
+//   to: "2025-09-18",
+// });
 
 module.exports = {
   fetchGAReport,
+  getGoogleCampaignStats,
 };
 
 // const [response] = await analyticsDataClient.runReport({

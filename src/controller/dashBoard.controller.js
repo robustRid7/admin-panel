@@ -92,6 +92,21 @@ const getMetaChart = async (req, res, next) => {
   }
 };
 
+const getGoogleCampaignDetails = async (req, res, next) => {
+  try {
+    const validatedQuery = validate(dashBoardDto.getCampaignChartSchema, req.body);
+
+    const result = await dashBoardService.getGoogleCampaignDetails(validatedQuery);
+
+    res.status(200).json({
+      message: "Chart data fetched successfully",
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getCampaignList,
   getCampaignListCount,
@@ -99,4 +114,5 @@ module.exports = {
   getThirdPartyChart,
   getMetaChart,
   getDomains,
+  getGoogleCampaignDetails,
 };

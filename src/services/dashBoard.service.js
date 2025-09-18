@@ -3,7 +3,10 @@ const LandingPageUser = require("../model/landingPageUser.model");
 const User = require("../model/user.model");
 const Domain = require("../model/domain.model");
 const campaignModel = require("../model/campaign.model");
-const { fetchGAReport } = require("./googleAna.service");
+const {
+  fetchGAReport,
+  getGoogleCampaignStats,
+} = require("./googleAna.service");
 const metaAdsService = require("./facebookAna.service");
 const WhatsAppUser = require("../model/whatsAppUser.model");
 const mongoose = require("mongoose");
@@ -289,6 +292,85 @@ async function getMetaChart(filters = {}) {
   };
 }
 
+async function getGoogleCampaignDetails(filters = {}) {
+  const cIds = await handleCampaignIdsViaDomain({
+    campaignId: filters.campaignId,
+    domain: filters.domain,
+    selection: "campaignId",
+  });
+
+  if (cIds) {
+    filters.campaignId = cIds;
+  } else if (filters.campaignId) {
+    const campaignData = await campaignModel
+      .findOne({ _id: filters.campaignId })
+      .lean();
+    filters.campaignId = campaignData.campaignId;
+  }
+
+  const response = await getGoogleCampaignStats(filters);
+
+  let totalImpressions = 0;
+  let totalClicks = 0;
+  let totalConversions = 0;
+  let totalSpend = 0;
+  let totalUniqueClicks = 0; // If not available, stays 0
+  let totalReach = 0; // If not available, stays 0
+
+  const data = response.map((row) => {
+    const impressions = Number(row.metrics?.impressions ?? 0);
+    const clicks = Number(row.metrics?.clicks ?? 0);
+    const conversions = Number(row.metrics?.conversions ?? 0);
+    const cost = Number(row.metrics?.costMicros ?? 0) / 1e6;
+    const averageCpc = Number(row.metrics?.averageCpc ?? 0) / 1e6;
+    const searchImpressionShare = Number(
+      row.metrics?.searchImpressionShare ?? 0
+    );
+
+    // Aggregate totals
+    totalImpressions += impressions;
+    totalClicks += clicks;
+    totalConversions += conversions;
+    totalSpend += cost;
+
+    return {
+      campaignId: row.campaign?.id ?? 0,
+      campaignName: row.campaign?.name ?? "",
+      date: row.segments?.date ?? null,
+      device: row.segments?.device ?? "UNKNOWN",
+      hour: row.segments?.hour ?? 0,
+      dayOfWeek: row.segments?.dayOfWeek ?? "UNKNOWN",
+      adNetworkType: row.segments?.adNetworkType ?? "UNKNOWN",
+      impressions,
+      clicks,
+      conversions,
+      conversionRate: clicks > 0 ? (conversions / clicks) * 100 : 0,
+      searchImpressionShare,
+      cost,
+      averageCpc,
+    };
+  });
+
+  return {
+    totals: {
+      impressions: totalImpressions,
+      clicks: totalClicks,
+      conversions: totalConversions,
+      spend: totalSpend,
+      unique_clicks: totalUniqueClicks, // Needs GA4 or other metric if available
+      ctr: totalImpressions
+        ? ((totalClicks / totalImpressions) * 100).toFixed(2)
+        : "0",
+      cpc: totalClicks ? (totalSpend / totalClicks).toFixed(2) : "0",
+      reach: totalReach, // Needs audience metrics if available
+      conversionRate: totalClicks
+        ? ((totalConversions / totalClicks) * 100).toFixed(2)
+        : "0",
+    },
+    data,
+  };
+}
+
 async function deleteAllData() {
   try {
     await BonusPageUser.deleteMany({});
@@ -320,4 +402,5 @@ module.exports = {
   getThirdPartyChart,
   getMetaChart,
   getDomains,
+  getGoogleCampaignDetails,
 };
