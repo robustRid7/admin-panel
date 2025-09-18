@@ -6,6 +6,10 @@ function clientInfoMiddleware(req, res, next) {
   const ip = requestIp.getClientIp(req) || "";
   const geo = geoip.lookup(ip);
 
+  const locale = new Intl.Locale("und", { region: clientInfo.country });
+  const language = locale.maximize().language;
+  console.log("reuested language is: ", language)
+
   req.clientInfo = {
     ip,
     city: geo?.city || null,
