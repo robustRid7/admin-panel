@@ -196,11 +196,8 @@ async function getGoogleCampaignStats(filters = {}) {
 
     // Run GAQL query
     const response = await customer.query(query);
-    if(!filters.campaignId){
-        const data = aggregateCampaignStatsByDate(response);
-        console.log(data);
-        return data;
-    }
+    const data = aggregateCampaignStatsByDate(response);
+    return data;
     // Transform into structured JSON
     return response;
   } catch (err) {
@@ -219,8 +216,8 @@ function aggregateCampaignStatsByDate(data) {
     if (!aggregated[date]) {
       aggregated[date] = {
         campaign: {
-          resource_name: 'aggregated', // placeholder
-          name: 'Aggregated Data',
+          resource_name: "aggregated", // placeholder
+          name: "Aggregated Data",
           id: 0,
         },
         metrics: {
@@ -247,15 +244,15 @@ function aggregateCampaignStatsByDate(data) {
     item.metrics.impressions += Number(row.metrics?.impressions ?? 0);
     item.metrics.clicks += Number(row.metrics?.clicks ?? 0);
     item.metrics.conversions += Number(row.metrics?.conversions ?? 0);
-    item.metrics.search_impression_share += Number(row.metrics?.search_impression_share ?? 0);
+    item.metrics.search_impression_share += Number(
+      row.metrics?.search_impression_share ?? 0
+    );
     item.metrics.cost_micros += Number(row.metrics?.cost_micros ?? 0);
 
     // Recalculate average CPC as weighted by clicks (if any)
     const totalClicks = item.metrics.clicks;
     item.metrics.average_cpc =
-      totalClicks > 0
-        ? item.metrics.cost_micros / totalClicks
-        : 0;
+      totalClicks > 0 ? item.metrics.cost_micros / totalClicks : 0;
 
     // For segments, take first non-null value or leave as null
     item.segments.device = item.segments.device ?? row.segments?.device ?? null;
@@ -274,7 +271,6 @@ function aggregateCampaignStatsByDate(data) {
 //   from: "2025-01-01",
 //   to: "2025-09-18",
 // });
-
 
 module.exports = {
   fetchGAReport,
