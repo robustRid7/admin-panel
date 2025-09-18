@@ -14,6 +14,7 @@ const getCampaignListCountSchema = Joi.object({
 
 const getCampaignChartSchema = Joi.object({
   campaignId: Joi.string().hex().length(24).optional().allow(null),
+  domain: Joi.string().hex().length(24).optional().allow(null),
 
   // 'to' defaults to today
   to: Joi.date()

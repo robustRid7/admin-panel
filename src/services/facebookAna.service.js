@@ -38,6 +38,14 @@ async function fetchFBAdsReport(filters = {}) {
     "unique_clicks",
   ];
 
+  //  [
+  //       {
+  //         field: "campaign.id",
+  //         operator: "IN", // ✅ multiple values
+  //         value: filters.campaignIds, // e.g. [ "123", "456", "789" ]
+  //       },
+  //     ]
+
   // Params
   const params = {
     time_range: timeRange,

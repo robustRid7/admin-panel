@@ -90,6 +90,28 @@ function formatGAResponse(response) {
   });
 }
 
+  // if (Array.isArray(campaignIds) && campaignIds.length > 0) {
+  //   // Multiple campaign IDs
+  //   const ids = campaignIds.map((id) => `'${id}'`).join(", ");
+  //   condition = `campaign.id IN (${ids})`;
+  // } else if (campaignIds) {
+  //   // Single campaign ID
+  //   condition = `campaign.id = '${campaignIds}'`;
+  // }
+
+  // return `
+  //   SELECT
+  //     campaign.id,
+  //     campaign.name,
+  //     metrics.impressions,
+  //     metrics.clicks,
+  //     metrics.conversions,
+  //     metrics.cost_micros,
+  //     metrics.average_cpc
+  //   FROM campaign
+  //   ${condition ? `WHERE ${condition}` : ""}
+  //   ORDER BY metrics.impressions DESC
+  // `;
 
 async function getCampaignStats(campaignId) {
   try {

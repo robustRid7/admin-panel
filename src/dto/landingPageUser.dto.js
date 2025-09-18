@@ -7,7 +7,7 @@ const createLandingPageUserSchema = Joi.object({
   campaignId: Joi.string().required(),
   campaignName: Joi.string().optional(),
   bonusId: Joi.string().required(),
-  landingPageName: Joi.string().optional(),
+  landingPageName: Joi.string().required(),
 });
 
 const base = Joi.object({
