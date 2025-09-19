@@ -1,7 +1,7 @@
 // controllers/oauth2.controller.js
 const oauth2Service = require("../services/oauth2.service");
 
-async function oauth2Callback(req, res) {
+async function oauth2Callback(req, res, next) {
   try {
     const { code } = req.query;
 
@@ -18,8 +18,8 @@ async function oauth2Callback(req, res) {
       <pre>${JSON.stringify(tokens, null, 2)}</pre>
       <p><strong>📌 Copy the refresh_token and store it securely (env var, secret manager, DB, etc.)</strong></p>
     `);
-  } catch (error) {
-    console.error("❌ Error exchanging code for tokens:", error.response?.data || error.message);
+  } catch (err) {
+    console.error("❌ Error exchanging code for tokens:", err.response?.data || err.message);
     next(err);
   }
 }
